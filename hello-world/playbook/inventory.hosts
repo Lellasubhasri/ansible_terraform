@@ -1,0 +1,4 @@
+[asg_instances]
+instance1 ansible_host=35.156.162.98 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/qwerty.pem
+instance2 ansible_host=3.75.187.134 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/qwerty.pem
+

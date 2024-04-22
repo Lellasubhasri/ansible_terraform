@@ -1,0 +1,47 @@
+---
+- name: Deploy React Application
+  hosts: asg_instances
+  become: true
+
+  tasks:
+  - name: Update apt cache
+    apt:
+      update_cache: yes
+
+  - name: Install build tools (replace with your needs)
+    apt:
+      name: "{{ packages }}"
+    vars:
+      packages:
+        - npm  
+        - nodejs # Or yarn, depending on your project
+
+  - name: Copy React build files
+    copy:
+      src: hello.js  # Replace with your React build output directory
+      dest: /var/www/html
+      owner: www-data  # Adjust ownership if needed
+      group: www-data  # Adjust ownership if needed
+    notify: Restart Nginx
+
+  handlers:
+  - name: Restart Nginx
+    service:
+      name: nginx
+      state: restarted
+
+  # Add a task to create the Nginx server block configuration file
+  - name: Configure Nginx for React app
+    template:
+      src: nginx.conf.j2  # Replace with your template file
+      dest: /etc/nginx/sites-available/hello-world.conf
+      owner: root
+      group: root
+      mode: 0644
+    notify: Reload Nginx
+
+  - name: Enable and reload Nginx configuration
+    systemd:
+      name: nginx
+      state: reloaded
+    notify: Restart Nginx  # Ensure Nginx restarts after config change
